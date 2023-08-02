@@ -28,7 +28,7 @@ class CommentController {
         }
         def comment = new Comment(null, post.get(), user, new Date(), dto.message())
         commentRepository.save(comment)
-        return ResponseEntity.ok(Map.of("id", comment.getId(),"postId", dto.postId(),"userId", comment.getUser().getId(),"createDate",
-                comment.getCreateDate(), "message", comment.getMessage()))
+        return ResponseEntity.ok(Map.of("id", comment.id,"postId", comment.post.id,"userId", comment.user.id,"createDate",
+                comment.createDate, "message", comment.message))
     }
 }

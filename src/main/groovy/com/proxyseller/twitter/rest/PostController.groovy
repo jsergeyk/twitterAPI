@@ -40,7 +40,7 @@ class PostController {
         def allComments = commentRepository.findByPostIn(posts)
         allComments*.getPost().toSet().forEach {post ->{
             def commentsByPost = allComments.findAll { comment -> comment.post == post }
-                    .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.message, comment.createDate)}
+                    .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)}
             def postDTO = new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost)
             response.add(postDTO)
         }}

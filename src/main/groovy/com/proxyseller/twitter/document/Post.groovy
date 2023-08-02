@@ -2,8 +2,10 @@ package com.proxyseller.twitter.document
 
 import com.mongodb.lang.NonNull
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
 
+@Document
 class Post {
     @Id
     String id
