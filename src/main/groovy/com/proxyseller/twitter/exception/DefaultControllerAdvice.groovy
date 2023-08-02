@@ -10,15 +10,23 @@ class DefaultControllerAdvice {
 
     @ExceptionHandler(NoSuchElementException.class)
     ResponseEntity<Map<String, String>> handleException(NoSuchElementException e) {
-        Map<String, String> response = new HashMap<>()
+        def response = new HashMap<>()
         response.put("error", "No such element by id")
         response.put("description", e.getMessage())
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST)
     }
 
+    @ExceptionHandler(PropertyNotFoundException.class)
+    ResponseEntity<Map<String, String>> handleException(PropertyNotFoundException e) {
+        def response = new HashMap<>()
+        response.put("error", "Property not found by")
+        response.put("description", "Property not found by id " + e.getMessage())
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND)
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<Map<String, String>> handleException(Exception e) {
-        Map<String, String> response = new HashMap<>()
+        def response = new HashMap<>()
         response.put("error", "Exception")
         response.put("description", e.getMessage())
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST)
