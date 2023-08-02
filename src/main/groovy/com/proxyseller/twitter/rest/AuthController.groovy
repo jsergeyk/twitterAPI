@@ -3,7 +3,7 @@ package com.proxyseller.twitter.rest;
 import com.proxyseller.twitter.document.RefreshToken;
 import com.proxyseller.twitter.document.User;
 import com.proxyseller.twitter.dto.LoginDTO;
-import com.proxyseller.twitter.dto.SignupDTO;
+import com.proxyseller.twitter.dto.UserDTO;
 import com.proxyseller.twitter.dto.TokenDTO;
 import com.proxyseller.twitter.repository.RefreshTokenRepository;
 import com.proxyseller.twitter.security.JwtHelper;
@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,8 +54,8 @@ class AuthController {
 
     @PostMapping("/signup")
     //@Transactional
-    ResponseEntity<?> signUp(@Valid @RequestBody SignupDTO signupDTO) {
-        def user = new User(signupDTO.username(), signupDTO.email(), passwordEncoder.encode(signupDTO.password()), new HashSet<>(), true);
+    ResponseEntity<?> signUp(@Valid @RequestBody UserDTO dto) {
+        def user = new User(dto.username(), dto.email(), passwordEncoder.encode(dto.password()), new HashSet<>(), true);
         userService.save(user);
         def refreshToken = new RefreshToken();
         refreshToken.setUser(user);

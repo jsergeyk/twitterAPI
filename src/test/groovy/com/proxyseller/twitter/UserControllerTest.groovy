@@ -2,7 +2,7 @@ package com.proxyseller.twitter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.proxyseller.twitter.document.User
-import com.proxyseller.twitter.dto.SignupDTO
+import com.proxyseller.twitter.dto.UserDTO
 import com.proxyseller.twitter.dto.TokenDTO
 import com.proxyseller.twitter.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,11 +35,11 @@ class UserControllerTest extends BasicItSpec {
             def userName = "testUserAndDelete"
             def email = "test@gmail.com"
             def userPassword = "123456"
-            def signupDTO = new SignupDTO(userName, email, userPassword, null)
+            def userDTO = new UserDTO(userName, email, userPassword, null)
         when:
             userRepository.deleteByUsername(userName)
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/signup")
-                .content(objectMapper.writeValueAsString(signupDTO))
+                .content(objectMapper.writeValueAsString(userDTO))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200))
                 .andReturn().response.contentAsString
@@ -58,9 +58,9 @@ class UserControllerTest extends BasicItSpec {
     @Unroll
     def "step 2 edit user /api/users/edit/{userid}"() {
         when:
-            def signupDTO = new SignupDTO(newUserName, newEmail, newPassword, isActive)
+            def userDTO = new UserDTO(newUserName, newEmail, newPassword, isActive)
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/edit/" + userId)
-                    .content(objectMapper.writeValueAsString(signupDTO))
+                    .content(objectMapper.writeValueAsString(userDTO))
                     .header("Authorization", "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON_VALUE))
             def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200))

@@ -4,7 +4,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public record SignupDTO(@NotBlank
+public record UserDTO(@NotBlank
                         @Size(min=3, max = 30)
                         String username,
                         @Email

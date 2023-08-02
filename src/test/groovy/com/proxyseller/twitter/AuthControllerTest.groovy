@@ -1,7 +1,7 @@
 package com.proxyseller.twitter
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.proxyseller.twitter.dto.SignupDTO
+import com.proxyseller.twitter.dto.UserDTO
 import com.proxyseller.twitter.dto.TokenDTO
 import com.proxyseller.twitter.repository.PostRepository
 import com.proxyseller.twitter.repository.RefreshTokenRepository
@@ -34,11 +34,11 @@ class AuthControllerTest extends BasicItSpec {
             def userId = null
             def userName = "testUser"
             def userPassword = "123456"
-            def signupDTO = new SignupDTO(userName, "testUser1@gmail.com", userPassword, null)
+            def userDTO = new UserDTO(userName, "testUser1@gmail.com", userPassword, null)
         when:
         userRepository.deleteByUsername(userName)
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/signup")
-                .content(objectMapper.writeValueAsString(signupDTO))
+                .content(objectMapper.writeValueAsString(userDTO))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200))
                 .andReturn().response.contentAsString

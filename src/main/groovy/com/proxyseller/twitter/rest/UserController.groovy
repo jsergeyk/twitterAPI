@@ -1,7 +1,7 @@
 package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.User
-import com.proxyseller.twitter.dto.SignupDTO
+import com.proxyseller.twitter.dto.UserDTO
 import com.proxyseller.twitter.repository.PostRepository
 import com.proxyseller.twitter.repository.RefreshTokenRepository
 import com.proxyseller.twitter.repository.UserRepository
@@ -32,12 +32,12 @@ class UserController {
 
     @PatchMapping(value = "/edit/{id}")
     @PreAuthorize("#authUser.id == #id")
-    ResponseEntity<?> editPost(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody SignupDTO user) {
-        authUser.email = user.email() ?: authUser.email
-        authUser.username = user.username() ?: authUser.username
-        authUser.isActive = user.isActive() ?: authUser.isActive
-        if (user.password() != null) {
-            authUser.setPassword(passwordEncoder.encode(user.password()));
+    ResponseEntity<?> editPost(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody UserDTO userDto) {
+        authUser.email = userDto.email() ?: authUser.email
+        authUser.username = userDto.username() ?: authUser.username
+        authUser.isActive = userDto.isActive() ?: authUser.isActive
+        if (userDto.password() != null) {
+            authUser.setPassword(passwordEncoder.encode(userDto.password()));
         }
         userRepository.save(authUser)
         return ResponseEntity.ok(authUser)

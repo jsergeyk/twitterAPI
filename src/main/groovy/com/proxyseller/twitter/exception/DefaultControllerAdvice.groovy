@@ -21,7 +21,7 @@ class DefaultControllerAdvice {
         def response = new HashMap<>()
         response.put("error", "Property not found by")
         response.put("description", "Property not found by id " + e.getMessage())
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND)
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(Exception.class)
