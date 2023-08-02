@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service
 class FollowingService {
 
     @Autowired
-    FollowingRepository followingRepository
+    private FollowingRepository followingRepository
     @Autowired
-    UserRepository userRepository
+    private UserRepository userRepository
 
     List<Following> findByUser(User user) {
         return followingRepository.findByUser(user)
