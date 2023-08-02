@@ -38,7 +38,7 @@ class PostController {
     }
 
     @GetMapping
-    ResponseEntity<?> currentUserName(@AuthenticationPrincipal User user) {
+    ResponseEntity<?> getUserPosts(@AuthenticationPrincipal User user) {
         def posts = postRepository.findByUser(user)
         def response = new ArrayList<PostDTO>()
         def comments = commentRepository.findByPostIn(posts)

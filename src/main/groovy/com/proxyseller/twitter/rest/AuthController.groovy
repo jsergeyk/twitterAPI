@@ -6,7 +6,6 @@ import com.proxyseller.twitter.dto.LoginDTO;
 import com.proxyseller.twitter.dto.SignupDTO;
 import com.proxyseller.twitter.dto.TokenDTO;
 import com.proxyseller.twitter.repository.RefreshTokenRepository;
-import com.proxyseller.twitter.repository.UserRepository;
 import com.proxyseller.twitter.security.JwtHelper;
 import com.proxyseller.twitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +32,6 @@ class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private JwtHelper jwtHelper;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -60,7 +57,7 @@ class AuthController {
     //@Transactional
     ResponseEntity<?> signUp(@Valid @RequestBody SignupDTO signupDTO) {
         def user = new User(signupDTO.username(), signupDTO.email(), passwordEncoder.encode(signupDTO.password()), new HashSet<>(), true);
-        userRepository.save(user);
+        userService.save(user);
         def refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshTokenRepository.save(refreshToken);

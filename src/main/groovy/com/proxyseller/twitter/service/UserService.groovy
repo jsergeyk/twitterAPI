@@ -23,4 +23,8 @@ class UserService implements UserDetailsService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"))
     }
+
+    User save(User user) {
+        return userRepository.save(user);
+    }
 }
