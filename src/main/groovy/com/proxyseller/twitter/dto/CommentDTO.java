@@ -1,4 +1,6 @@
 package com.proxyseller.twitter.dto;
 
-public record CommentDTO(String id, String message, String postId) {
+import java.util.Date;
+
+public record CommentDTO(String id, String postId, String message, Date createDate) {
 }

@@ -66,6 +66,7 @@ class User implements UserDetails {
         return isActive
     }
 
+    @Override
     boolean equals(o) {
         if (this.is(o)) return true
         if (o == null || getClass() != o.class) return false
@@ -79,6 +80,7 @@ class User implements UserDetails {
         return true
     }
 
+    @Override
     int hashCode() {
         int result
         result = id.hashCode()

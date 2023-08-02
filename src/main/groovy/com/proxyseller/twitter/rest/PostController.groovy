@@ -1,7 +1,11 @@
 package com.proxyseller.twitter.rest
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
+import com.proxyseller.twitter.dto.CommentDTO
+import com.proxyseller.twitter.dto.PostDTO
+import com.proxyseller.twitter.repository.CommentRepository
 import com.proxyseller.twitter.repository.PostRepository
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +20,10 @@ class PostController {
 
     @Autowired
     PostRepository postRepository
+    @Autowired
+    CommentRepository commentRepository
+    @Autowired
+    ObjectMapper objectMapper
 
     @PostMapping(value = "/add")
     ResponseEntity<?> addPost(@AuthenticationPrincipal User user, @RequestBody Post post) {
@@ -25,10 +33,18 @@ class PostController {
         return ResponseEntity.ok(Map.of("id", post.getId(),"createDate", post.getCreateDate(), "message", post.getMessage()))
     }
 
-    @GetMapping(value = "/my")
+    @GetMapping
     ResponseEntity<?> currentUserName(@AuthenticationPrincipal User user) {
         def posts = postRepository.findByUser(user)
-        return ResponseEntity.ok(posts)
+        def response = new ArrayList<PostDTO>()
+        def allComments = commentRepository.findByPostIn(posts)
+        allComments*.getPost().toSet().forEach {post ->{
+            def commentsByPost = allComments.findAll { comment -> comment.post == post }
+                    .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.message, comment.createDate)}
+            def postDTO = new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost)
+            response.add(postDTO)
+        }}
+        return ResponseEntity.ok(response)
     }
 
     @PatchMapping(value = "/edit/{id}")
