@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.CommentDTO
+import com.proxyseller.twitter.dto.LikeDTO
 import com.proxyseller.twitter.dto.PostDTO
 import com.proxyseller.twitter.repository.CommentRepository
+import com.proxyseller.twitter.repository.LikeRepository
 import com.proxyseller.twitter.repository.PostRepository
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +25,8 @@ class PostController {
     @Autowired
     CommentRepository commentRepository
     @Autowired
+    LikeRepository likeRepository
+    @Autowired
     ObjectMapper objectMapper
 
     @PostMapping(value = "/add")
@@ -30,18 +34,21 @@ class PostController {
         post.setUser(user)
         post.setCreateDate(new Date())
         postRepository.save(post)
-        return ResponseEntity.ok(Map.of("id", post.getId(),"createDate", post.getCreateDate(), "message", post.getMessage()))
+        return ResponseEntity.ok(Map.of("id", post.id,"createDate", post.createDate, "message", post.message))
     }
 
     @GetMapping
     ResponseEntity<?> currentUserName(@AuthenticationPrincipal User user) {
         def posts = postRepository.findByUser(user)
         def response = new ArrayList<PostDTO>()
-        def allComments = commentRepository.findByPostIn(posts)
-        allComments*.getPost().toSet().forEach {post ->{
-            def commentsByPost = allComments.findAll { comment -> comment.post == post }
+        def comments = commentRepository.findByPostIn(posts)
+        def likes = likeRepository.findByPostIn(posts)
+        posts.toSet().forEach {post ->{
+            def commentsByPost = comments.findAll { comment -> comment.post == post }
                     .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)}
-            def postDTO = new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost)
+            def likesByPost = likes.findAll { like -> like.post == post }
+                    .collect {like -> return new LikeDTO(like.id, like.post.id, like.user.id, like.createDate)}
+            def postDTO = new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost, likesByPost)
             response.add(postDTO)
         }}
         return ResponseEntity.ok(response)
@@ -50,20 +57,20 @@ class PostController {
     @PatchMapping(value = "/edit/{id}")
     ResponseEntity<?> editPost(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Post post) {
         Post existingPost = postRepository.findById(id).orElseThrow()
-        if (existingPost.getUser() == user) {
+        if (existingPost.user == user) {
             BeanUtils.copyProperties(post, existingPost, "id", "createDate", "user")
             postRepository.save(existingPost)
         } else {
             throw new AccessDeniedException("Access denied")
         }
-        return ResponseEntity.ok(Map.of("id", existingPost.getId(),"createDate", existingPost.getCreateDate(), "message", existingPost.getMessage()))
+        return ResponseEntity.ok(Map.of("id", existingPost.id,"createDate", existingPost.createDate, "message", existingPost.message))
     }
 
     @DeleteMapping("/delete/{id}")
     ResponseEntity<Map<String, String>> deletePost(@AuthenticationPrincipal User user, @PathVariable String id) {
         def post = postRepository.findById(id)
         if (post.isPresent()) {
-            if (post.get().getUser() == user) {
+            if (post.get().user == user) {
                 postRepository.deleteById(id)
                 return ResponseEntity.ok(Map.of("description", "Post successfully deleted"))
             } else {

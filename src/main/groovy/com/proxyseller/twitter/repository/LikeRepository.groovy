@@ -8,5 +8,6 @@ interface LikeRepository extends MongoRepository<Like, String> {
     List<Like> findByPost(Post post);
 
     List<Like> findByPostIn(List<Post> posts);
+
     Like findByPostAndUser(Post post, User user);
 }
