@@ -30,9 +30,15 @@ class LikeController {
         if (!post.isPresent()) {
             throw new PropertyNotFoundException(dto.postId())
         }
-        def like = new Like(null, post.get(), user, new Date())
-        likeRepository.save(like)
-        return ResponseEntity.ok(Map.of("id", like.id,"postId", like.post.id,"userId", like.user.id,"createDate",
-                like.createDate))
+        def existingLike = likeRepository.findByPostAndUser(post.get(), user)
+        if (existingLike) {
+            likeRepository.delete(existingLike)
+            return ResponseEntity.ok(Map.of("description", "Like successfully deleted"))
+        } else {
+            def like = new Like(null, post.get(), user, new Date())
+            likeRepository.save(like)
+            return ResponseEntity.ok(Map.of("id", like.id,"postId", like.post.id,"userId", like.user.id,"createDate",
+                    like.createDate))
+        }
     }
 }
