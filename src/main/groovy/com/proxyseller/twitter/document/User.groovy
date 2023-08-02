@@ -66,21 +66,22 @@ class User implements UserDetails {
         return isActive
     }
 
-    @Override
-    boolean equals(Object o) {
-        if (this == o) return true
-        if (o == null || getClass() != o.getClass()) return false
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (o == null || getClass() != o.class) return false
 
         User user = (User) o
 
-        if (!id.equals(user.id)) return false
-        if (!username.equals(user.username)) return false
-        return email.equals(user.email)
+        if (email != user.email) return false
+        if (id != user.id) return false
+        if (username != user.username) return false
+
+        return true
     }
 
-    @Override
     int hashCode() {
-        int result = id.hashCode()
+        int result
+        result = id.hashCode()
         result = 31 * result + username.hashCode()
         result = 31 * result + email.hashCode()
         return result
