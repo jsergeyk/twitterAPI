@@ -19,14 +19,14 @@ repositories {
 }
 
 docker {
-	name "twitterapp"
+	name "kalchenkoserhii/twitterapp"
 	dockerfile file('Dockerfile')
 	copySpec.from("build/libs/twitter-1.0.jar")
 	buildArgs(['JAR_FILE': "twitter-1.0.jar"])
 }
 dockerRun {
 	name "twitterapp"
-	image "twitterapp"
+	image "kalchenkoserhii/twitterapp"
 	ports '8080:8080'
 	daemonize true
 	clean true
