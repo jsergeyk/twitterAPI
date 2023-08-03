@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class AccessTokenFilter extends OncePerRequestFilter {
-    private static final def log = LogManager.getLogger(AccessTokenFilter.class)
+    private static final def log = LogManager.getLogger(AccessTokenFilter)
     private static final def AUTHORIZATION_HEADER = "Authorization"
     private JwtHelper jwtHelper
     private UserService userService

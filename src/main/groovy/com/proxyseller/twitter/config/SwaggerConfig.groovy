@@ -27,7 +27,7 @@ class SwaggerConfig {
                 .description("Twitter REST API. Spring Boot, MongoDB, Groovy, Gradle, Spock, Docker")
                 .license(new License().name("Apache 2.0")
                         .url("http://springdoc.org"))
-                .contact(new Contact().name("username")
+                .contact(new Contact().name("Kalchenko Serhii")
                         .email("test@gmail.com")))
                 .servers(List.of(new Server().url("http://localhost:8080")
                         .description("Dev service")))

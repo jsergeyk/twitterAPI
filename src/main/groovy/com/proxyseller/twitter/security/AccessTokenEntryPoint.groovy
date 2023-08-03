@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class AccessTokenEntryPoint implements AuthenticationEntryPoint {
-    private static final def log = LogManager.getLogger(AccessTokenEntryPoint.class)
+    private static final def log = LogManager.getLogger(AccessTokenEntryPoint)
 
     @Override
     void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)

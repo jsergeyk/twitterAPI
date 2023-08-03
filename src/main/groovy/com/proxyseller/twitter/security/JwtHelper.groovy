@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 class JwtHelper {
     private static final def ISSUER = "TwitterApp"
     private static final def TOKEN_ID = "tokenId"
-    private static final def log = LogManager.getLogger(JwtHelper.class)
+    private static final def log = LogManager.getLogger(JwtHelper)
 
     private final int accessTokenExpirationMs
     private final long refreshTokenExpirationMs

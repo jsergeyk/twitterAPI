@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 @ControllerAdvice
 class DefaultControllerAdvice {
 
-    @ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler(NoSuchElementException)
     ResponseEntity<Map<String, String>> handleException(NoSuchElementException e) {
         def response = new HashMap<>()
         response.put("error", "No such element by id")
@@ -16,7 +16,7 @@ class DefaultControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST)
     }
 
-    @ExceptionHandler(PropertyNotFoundException.class)
+    @ExceptionHandler(PropertyNotFoundException)
     ResponseEntity<Map<String, String>> handleException(PropertyNotFoundException e) {
         def response = new HashMap<>()
         response.put("error", "Property not found by")
@@ -24,7 +24,7 @@ class DefaultControllerAdvice {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST)
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception)
     ResponseEntity<Map<String, String>> handleException(Exception e) {
         def response = new HashMap<>()
         response.put("error", "Exception")
