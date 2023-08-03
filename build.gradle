@@ -43,6 +43,9 @@ dependencies {
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 
+	implementation 'io.swagger:swagger-annotations:2.0.0-rc2'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.spockframework:spock-core:2.4-M1-groovy-3.0'

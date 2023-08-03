@@ -4,6 +4,7 @@ import com.proxyseller.twitter.document.Following
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.FollowingDTO
 import com.proxyseller.twitter.service.FollowingService
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -16,6 +17,7 @@ class FollowingController {
     @Autowired
     FollowingService followingService
 
+    @Operation(summary = "Following on the user")
     @PostMapping(value = "/add")
     ResponseEntity<?> addFollowing(@AuthenticationPrincipal User user, @RequestBody FollowingDTO dto) {
         if (user.id == dto.followingUserId()) {
@@ -32,6 +34,7 @@ class FollowingController {
         }
     }
 
+    @Operation(summary = "Unfollowing on the user")
     @DeleteMapping
     ResponseEntity<?> deleteFollowing(@AuthenticationPrincipal User user, @RequestBody FollowingDTO dto) {
         def followingUser = followingService.findFollowingUser(dto)

@@ -1,3 +1,5 @@
+API: http://localhost:8080/swagger-ui/index.html
+
 1 Download image mongo and rename to mongodb:
 
     docker pull mongo

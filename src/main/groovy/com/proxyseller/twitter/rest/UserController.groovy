@@ -5,6 +5,7 @@ import com.proxyseller.twitter.dto.UserDTO
 import com.proxyseller.twitter.repository.PostRepository
 import com.proxyseller.twitter.repository.RefreshTokenRepository
 import com.proxyseller.twitter.service.UserService
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -25,11 +26,7 @@ class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping(value = "/me")
-    ResponseEntity<?> currentUser(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(Map.of("username", user.getUsername(),"email", user.getEmail()))
-    }
-
+    @Operation(summary = "Editing a user")
     @PatchMapping(value = "/edit/{id}")
     @PreAuthorize("#authUser.id == #id")
     ResponseEntity<?> editPost(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody UserDTO userDto) {
@@ -43,6 +40,7 @@ class UserController {
         return ResponseEntity.ok(authUser)
     }
 
+    @Operation(summary = "Deleting a user")
     @DeleteMapping("/delete")
     //@Transactional
     ResponseEntity<Map<String, String>> deleteUser(@AuthenticationPrincipal User user) {

@@ -4,6 +4,7 @@ import com.proxyseller.twitter.document.Like
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.LikeDTO
 import com.proxyseller.twitter.service.LikeService
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -16,6 +17,7 @@ class LikeController {
     @Autowired
     LikeService likeService
 
+    @Operation(summary = "Add/remove like")
     @PostMapping(value = "/add")
     ResponseEntity<?> addLike(@AuthenticationPrincipal User user, @RequestBody LikeDTO dto) {
         def post = likeService.findPost(dto)

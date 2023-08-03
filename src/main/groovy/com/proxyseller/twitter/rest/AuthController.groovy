@@ -7,7 +7,8 @@ import com.proxyseller.twitter.dto.UserDTO;
 import com.proxyseller.twitter.dto.TokenDTO;
 import com.proxyseller.twitter.repository.RefreshTokenRepository;
 import com.proxyseller.twitter.security.JwtHelper;
-import com.proxyseller.twitter.service.UserService;
+import com.proxyseller.twitter.service.UserService
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +38,7 @@ class AuthController {
     @Autowired
     private UserService userService
 
+    @Operation(summary = "Login")
     @PostMapping("/login")
     //@Transactional
     ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
@@ -52,6 +54,7 @@ class AuthController {
         return ResponseEntity.ok(new TokenDTO(user.getId(), accessToken, refreshTokenStr))
     }
 
+    @Operation(summary = "Create a user")
     @PostMapping("/signup")
     //@Transactional
     ResponseEntity<?> signUp(@Valid @RequestBody UserDTO dto) {
@@ -66,6 +69,7 @@ class AuthController {
         return ResponseEntity.ok(new TokenDTO(user.getId(), accessToken, refreshTokenStr))
     }
 
+    @Operation(summary = "Logout")
     @PostMapping("/logout")
     ResponseEntity<?> logout(@RequestBody TokenDTO dto) {
         def refreshTokenStr = dto.refreshToken()
@@ -79,14 +83,15 @@ class AuthController {
         throw  new BadCredentialsException("invalid token")
     }
 
+    @Operation(summary = "Recreate accessToken")
     @PostMapping("/access-token")
     ResponseEntity<?> accessToken(@RequestBody TokenDTO dto) {
         def refreshTokenStr = dto.refreshToken()
         if (jwtHelper.validateRefreshToken(refreshTokenStr)) {
             String tokenId = jwtHelper.getTokenIdFromRefreshToken(refreshTokenStr)
             if (refreshTokenRepository.existsById(tokenId)) {
-                User user = userService.findById(jwtHelper.getUserIdFromRefreshToken(refreshTokenStr))
-                String accessToken = jwtHelper.createAccessToken(user)
+                def user = userService.findById(jwtHelper.getUserIdFromRefreshToken(refreshTokenStr))
+                def accessToken = jwtHelper.createAccessToken(user)
                 return ResponseEntity.ok(new TokenDTO(user.getId(), accessToken, refreshTokenStr))
             }
         }

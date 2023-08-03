@@ -47,8 +47,10 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(accessTokenEntryPoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated()
+                .and().authorizeRequests().antMatchers("/api/auth/**",
+                "/swagger-ui/**",
+                "/v3/**").permitAll()
+                .anyRequest().permitAll()
         http.addFilterBefore(accessTokenFilter, UsernamePasswordAuthenticationFilter.class)
     }
 }

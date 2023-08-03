@@ -5,6 +5,7 @@ import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.service.FollowingService
 import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -23,6 +24,7 @@ class PostController {
     @Autowired
     UserService userService
 
+    @Operation(summary = "Creating a post")
     @PostMapping(value = "/add")
     ResponseEntity<?> addPost(@AuthenticationPrincipal User user, @RequestBody Post post) {
         post.setUser(user)
@@ -31,6 +33,7 @@ class PostController {
         return ResponseEntity.ok(Map.of("id", post.id,"createDate", post.createDate, "message", post.message))
     }
 
+    @Operation(summary = "Get the user's posts with posts of the people he followed (along with likes and comments)")
     @GetMapping
     ResponseEntity<?> getPosts(@AuthenticationPrincipal User user) {
         def posts = postService.findByUser(user)
@@ -41,6 +44,7 @@ class PostController {
         return ResponseEntity.ok(postsDTO)
     }
 
+    @Operation(summary = "Get another user's posts")
     @GetMapping(value = "/user/{userId}")
     ResponseEntity<?> getPostsOtherUser(@AuthenticationPrincipal User user, @PathVariable String userId) {
         if (!userId || !userService.findById(userId)) {
@@ -51,6 +55,7 @@ class PostController {
         return ResponseEntity.ok(postsDTO)
     }
 
+    @Operation(summary = "Editing a post")
     @PatchMapping(value = "/edit/{id}")
     ResponseEntity<?> editPost(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Post post) {
         Post existingPost = postService.findById(id).orElseThrow()
@@ -63,6 +68,7 @@ class PostController {
         return ResponseEntity.ok(Map.of("id", existingPost.id,"createDate", existingPost.createDate, "message", existingPost.message))
     }
 
+    @Operation(summary = "Deleting a post")
     @DeleteMapping("/delete/{id}")
     ResponseEntity<Map<String, String>> deletePost(@AuthenticationPrincipal User user, @PathVariable String id) {
         def post = postService.findById(id)
