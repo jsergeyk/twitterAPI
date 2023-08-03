@@ -58,6 +58,12 @@ class AuthController {
     @PostMapping("/signup")
     //@Transactional
     ResponseEntity<?> signUp(@Valid @RequestBody UserDTO dto) {
+        if (userService.findByUsername(dto.username()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("description", "Username already exist"))
+        }
+        if (userService.findByEmail(dto.email()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("description", "Email already exist"))
+        }
         def user = new User(dto.username(), dto.email(), passwordEncoder.encode(dto.password()), new HashSet<>(), true)
         userService.save(user)
         def refreshToken = new RefreshToken()
