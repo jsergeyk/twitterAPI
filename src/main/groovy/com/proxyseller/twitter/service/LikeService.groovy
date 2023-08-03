@@ -19,11 +19,11 @@ class LikeService {
     private PostRepository postRepository
 
     Like save(Like following) {
-        return likeRepository.save(following);
+        return likeRepository.save(following)
     }
 
     void delete(Like following) {
-        likeRepository.delete(following);
+        likeRepository.delete(following)
     }
 
     Like findByPostAndUser(Post post, User user) {

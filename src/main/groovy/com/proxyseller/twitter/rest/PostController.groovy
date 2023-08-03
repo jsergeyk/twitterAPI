@@ -2,13 +2,9 @@ package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
-import com.proxyseller.twitter.dto.CommentDTO
-import com.proxyseller.twitter.dto.LikeDTO
-import com.proxyseller.twitter.dto.PostDTO
-import com.proxyseller.twitter.repository.CommentRepository
-import com.proxyseller.twitter.repository.LikeRepository
-import com.proxyseller.twitter.repository.PostRepository
 import com.proxyseller.twitter.service.FollowingService
+import com.proxyseller.twitter.service.PostService
+import com.proxyseller.twitter.service.UserService
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -21,48 +17,46 @@ import org.springframework.web.bind.annotation.*
 class PostController {
 
     @Autowired
-    PostRepository postRepository
-    @Autowired
-    CommentRepository commentRepository
-    @Autowired
-    LikeRepository likeRepository
+    PostService postService
     @Autowired
     FollowingService followingService
+    @Autowired
+    UserService userService
 
     @PostMapping(value = "/add")
     ResponseEntity<?> addPost(@AuthenticationPrincipal User user, @RequestBody Post post) {
         post.setUser(user)
         post.setCreateDate(new Date())
-        postRepository.save(post)
+        postService.save(post)
         return ResponseEntity.ok(Map.of("id", post.id,"createDate", post.createDate, "message", post.message))
     }
 
     @GetMapping
-    ResponseEntity<?> getUserPosts(@AuthenticationPrincipal User user) {
-        def posts = postRepository.findByUser(user)
+    ResponseEntity<?> getPosts(@AuthenticationPrincipal User user) {
+        def posts = postService.findByUser(user)
         def followings = followingService.findByUser(user)
-        def postsFollowings = postRepository.findByUserIn(followings.followingUser)
+        def postsFollowings = postService.findByUserIn(followings.followingUser)
         posts.addAll(postsFollowings)
-        def response = new ArrayList<PostDTO>()
-        def comments = commentRepository.findByPostIn(posts)
-        def likes = likeRepository.findByPostIn(posts)
-        posts.toSet().forEach {post ->{
-            def commentsByPost = comments.findAll { comment -> comment.post == post }
-                    .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)}
-            def likesByPost = likes.findAll { like -> like.post == post }
-                    .collect {like -> return new LikeDTO(like.id, like.post.id, like.user.id, like.createDate)}
-            def postDTO = new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost, likesByPost)
-            response.add(postDTO)
-        }}
-        return ResponseEntity.ok(response)
+        def postsDTO = postService.findPostsAndCommentsAndLikes(posts)
+        return ResponseEntity.ok(postsDTO)
+    }
+
+    @GetMapping(value = "/user/{userId}")
+    ResponseEntity<?> getPostsOtherUser(@AuthenticationPrincipal User user, @PathVariable String userId) {
+        if (!userId || !userService.findById(userId)) {
+            return ResponseEntity.badRequest().body(Map.of("description", "User cannot be self-followed"))
+        }
+        def posts = postService.findByUser_id(userId)
+        def postsDTO = postService.findPostsAndCommentsAndLikes(posts)
+        return ResponseEntity.ok(postsDTO)
     }
 
     @PatchMapping(value = "/edit/{id}")
     ResponseEntity<?> editPost(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Post post) {
-        Post existingPost = postRepository.findById(id).orElseThrow()
+        Post existingPost = postService.findById(id).orElseThrow()
         if (existingPost.user == user) {
             BeanUtils.copyProperties(post, existingPost, "id", "createDate", "user")
-            postRepository.save(existingPost)
+            postService.save(existingPost)
         } else {
             throw new AccessDeniedException("Access denied")
         }
@@ -71,10 +65,10 @@ class PostController {
 
     @DeleteMapping("/delete/{id}")
     ResponseEntity<Map<String, String>> deletePost(@AuthenticationPrincipal User user, @PathVariable String id) {
-        def post = postRepository.findById(id)
+        def post = postService.findById(id)
         if (post.isPresent()) {
             if (post.get().user == user) {
-                postRepository.deleteById(id)
+                postService.delete(post.get())
                 return ResponseEntity.ok(Map.of("description", "Post successfully deleted"))
             } else {
                 throw new AccessDeniedException("Access denied")

@@ -22,11 +22,11 @@ class FollowingService {
     }
 
     Following save(Following following) {
-        return followingRepository.save(following);
+        return followingRepository.save(following)
     }
 
     void delete(Following following) {
-        followingRepository.delete(following);
+        followingRepository.delete(following)
     }
 
     Optional<User> findFollowingUser(FollowingDTO dto) {

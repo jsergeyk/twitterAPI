@@ -53,8 +53,8 @@ class AuthControllerTest extends BasicItSpec {
             userRepository.existsById(userId)
         cleanup:
             def user = userRepository.findById(userId)
-            postRepository.deleteByUser(user.get());
-            tokenRepository.deleteByUser(user.get());
+            postRepository.deleteByUser(user.get())
+            tokenRepository.deleteByUser(user.get())
             userRepository.delete(user.get())
     }
 }

@@ -17,36 +17,36 @@ import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 class Config extends AbstractMongoClientConfiguration {
 
     @Value('${spring.data.mongodb.database}')
-    private String databaseName;
+    private String databaseName
     @Value('${host}')
-    private String host;
+    private String host
     @Value('${port}')
-    private String port;
+    private String port
 
     @Override
     protected String getDatabaseName() {
-        return databaseName;
+        return databaseName
     }
 
     @Override
     MongoClient mongoClient() {
-        def connectionString = new ConnectionString("mongodb://"+ host + ":" + port + "/");
-        def mongoClientSettings = MongoClientSettings.builder().applyConnectionString(connectionString).build();
-        return MongoClients.create(mongoClientSettings);
+        def connectionString = new ConnectionString("mongodb://"+ host + ":" + port + "/")
+        def mongoClientSettings = MongoClientSettings.builder().applyConnectionString(connectionString).build()
+        return MongoClients.create(mongoClientSettings)
     }
 
     @Override
     protected boolean autoIndexCreation() {
-        return true;
+        return true
     }
 
     @Bean
     MongoTransactionManager transactionManager(MongoDatabaseFactory factory) {
-        return new MongoTransactionManager(factory);
+        return new MongoTransactionManager(factory)
     }
 
     @Bean
     Logger logger(){
-        return LoggerFactory.getLogger("application");
+        return LoggerFactory.getLogger("application")
     }
 }

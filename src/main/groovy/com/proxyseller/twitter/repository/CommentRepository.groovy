@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface CommentRepository extends MongoRepository<Comment, String> {
 
-    List<Comment> findByPost(Post post);
+    List<Comment> findByPost(Post post)
 
-    List<Comment> findByPostIn(List<Post> posts);
+    List<Comment> findByPostIn(List<Post> posts)
 }

@@ -25,6 +25,10 @@ class UserService implements UserDetailsService {
     }
 
     User save(User user) {
-        return userRepository.save(user);
+        return userRepository.save(user)
+    }
+
+    void delete(User user) {
+        userRepository.delete(user)
     }
 }

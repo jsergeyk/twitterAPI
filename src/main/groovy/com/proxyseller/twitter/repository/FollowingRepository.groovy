@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface FollowingRepository extends MongoRepository<Following, String> {
 
-    List<Following> findByUser(User user);
+    List<Following> findByUser(User user)
 }

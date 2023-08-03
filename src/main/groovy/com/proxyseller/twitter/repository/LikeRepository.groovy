@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface LikeRepository extends MongoRepository<Like, String> {
 
-    List<Like> findByPost(Post post);
+    List<Like> findByPost(Post post)
 
-    List<Like> findByPostIn(List<Post> posts);
+    List<Like> findByPostIn(List<Post> posts)
 
-    Like findByPostAndUser(Post post, User user);
+    Like findByPostAndUser(Post post, User user)
 }

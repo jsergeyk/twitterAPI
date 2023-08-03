@@ -4,7 +4,7 @@ import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.UserDTO
 import com.proxyseller.twitter.repository.PostRepository
 import com.proxyseller.twitter.repository.RefreshTokenRepository
-import com.proxyseller.twitter.repository.UserRepository
+import com.proxyseller.twitter.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 class UserController {
 
     @Autowired
-    private UserRepository userRepository
+    private UserService userService
     @Autowired
     private PostRepository postRepository
     @Autowired
@@ -37,9 +37,9 @@ class UserController {
         authUser.username = userDto.username() ?: authUser.username
         authUser.isActive = userDto.isActive() ?: authUser.isActive
         if (userDto.password() != null) {
-            authUser.setPassword(passwordEncoder.encode(userDto.password()));
+            authUser.setPassword(passwordEncoder.encode(userDto.password()))
         }
-        userRepository.save(authUser)
+        userService.save(authUser)
         return ResponseEntity.ok(authUser)
     }
 
@@ -48,7 +48,7 @@ class UserController {
     ResponseEntity<Map<String, String>> deleteUser(@AuthenticationPrincipal User user) {
         postRepository.deleteByUser(user)
         refreshTokenRepository.deleteByUser(user)
-        userRepository.delete(user)
+        userService.delete(user)
         return ResponseEntity.ok(Map.of("description", "User successfully deleted"))
     }
 }

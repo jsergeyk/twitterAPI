@@ -9,6 +9,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 class TwitterApplication {
 
 	static void main(String[] args) {
-		SpringApplication.run(TwitterApplication, args);
+		SpringApplication.run(TwitterApplication, args)
 	}
 }

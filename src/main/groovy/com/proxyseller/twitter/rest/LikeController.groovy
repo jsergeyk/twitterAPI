@@ -3,7 +3,6 @@ package com.proxyseller.twitter.rest
 import com.proxyseller.twitter.document.Like
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.LikeDTO
-import com.proxyseller.twitter.repository.PostRepository
 import com.proxyseller.twitter.service.LikeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -16,8 +15,6 @@ class LikeController {
 
     @Autowired
     LikeService likeService
-    @Autowired
-    PostRepository postRepository
 
     @PostMapping(value = "/add")
     ResponseEntity<?> addLike(@AuthenticationPrincipal User user, @RequestBody LikeDTO dto) {
