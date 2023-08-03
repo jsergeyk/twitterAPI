@@ -1,6 +1,5 @@
 package com.proxyseller.twitter.rest
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.CommentDTO
@@ -9,6 +8,7 @@ import com.proxyseller.twitter.dto.PostDTO
 import com.proxyseller.twitter.repository.CommentRepository
 import com.proxyseller.twitter.repository.LikeRepository
 import com.proxyseller.twitter.repository.PostRepository
+import com.proxyseller.twitter.service.FollowingService
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -27,7 +27,7 @@ class PostController {
     @Autowired
     LikeRepository likeRepository
     @Autowired
-    ObjectMapper objectMapper
+    FollowingService followingService
 
     @PostMapping(value = "/add")
     ResponseEntity<?> addPost(@AuthenticationPrincipal User user, @RequestBody Post post) {
@@ -40,6 +40,9 @@ class PostController {
     @GetMapping
     ResponseEntity<?> getUserPosts(@AuthenticationPrincipal User user) {
         def posts = postRepository.findByUser(user)
+        def followings = followingService.findByUser(user)
+        def postsFollowings = postRepository.findByUserIn(followings.followingUser)
+        posts.addAll(postsFollowings)
         def response = new ArrayList<PostDTO>()
         def comments = commentRepository.findByPostIn(posts)
         def likes = likeRepository.findByPostIn(posts)

@@ -8,6 +8,8 @@ interface PostRepository extends MongoRepository<Post, String> {
 
     List<Post> findByUser(User user);
 
+    List<Post> findByUserIn(List<User> user);
+
     void deleteByUser(User user);
 
 }
