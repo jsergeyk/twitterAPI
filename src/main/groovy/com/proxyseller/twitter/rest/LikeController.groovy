@@ -24,24 +24,13 @@ class LikeController {
         def post = likeService.findPost(dto)
         def existingLike = likeService.findByPostAndUser(post.get(), user)
         if (existingLike) {
-            return ResponseEntity.badRequest().body(Map.of("description", "Like already exists"))
+            likeService.delete(existingLike)
+            return ResponseEntity.ok(Map.of("description", "Like successfully deleted"))
         } else {
             def like = new Like(null, post.get(), user, new Date())
             likeService.save(like)
             return ResponseEntity.ok(Map.of("id", like.id,"postId", like.post.id,"userId", like.user.id,"createDate",
                     like.createDate))
-        }
-    }
-
-    @DeleteMapping
-    ResponseEntity<?> deleteLike(@AuthenticationPrincipal User user, @RequestBody LikeDTO dto) {
-        def post = likeService.findPost(dto)
-        def existingLike = likeService.findByPostAndUser(post.get(), user)
-        if (!existingLike) {
-            return ResponseEntity.badRequest().body(Map.of("description", "Like has been deleted"))
-        } else {
-            likeService.delete(existingLike)
-            return ResponseEntity.ok(Map.of("description", "Like deleted successfully"))
         }
     }
 }
