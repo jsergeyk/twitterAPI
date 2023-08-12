@@ -4,8 +4,8 @@ import com.proxyseller.twitter.document.Following
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.FollowingDTO
 import com.proxyseller.twitter.exception.PropertyNotFoundException
-import com.proxyseller.twitter.repository.FollowingRepository
-import com.proxyseller.twitter.repository.UserRepository
+import com.proxyseller.twitter.springdata.IFollowing
+import com.proxyseller.twitter.springdata.IUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service
 class FollowingService {
 
     @Autowired
-    private FollowingRepository followingRepository
+    private IFollowing followingRepository
     @Autowired
-    private UserRepository userRepository
+    private IUser userRepository
 
     List<Following> findByUser(User user) {
         return followingRepository.findByUser(user)

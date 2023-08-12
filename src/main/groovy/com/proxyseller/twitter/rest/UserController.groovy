@@ -2,9 +2,9 @@ package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.UserDTO
-import com.proxyseller.twitter.repository.PostRepository
-import com.proxyseller.twitter.repository.RefreshTokenRepository
+import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
+import com.proxyseller.twitter.springdata.IRefreshToken
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -20,9 +20,9 @@ class UserController {
     @Autowired
     private UserService userService
     @Autowired
-    private PostRepository postRepository
+    private PostService postService
     @Autowired
-    private RefreshTokenRepository refreshTokenRepository
+    private IRefreshToken refreshTokenRepository
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -30,21 +30,27 @@ class UserController {
     @PatchMapping(value = "/edit/{id}")
     @PreAuthorize("#authUser.id == #id")
     ResponseEntity<?> editPost(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody UserDTO userDto) {
-        authUser.email = userDto.email() ?: authUser.email
-        authUser.username = userDto.username() ?: authUser.username
-        authUser.isActive = userDto.isActive() ?: authUser.isActive
+        if (userDto.email() != null) {
+            authUser.email = userDto.email()
+        }
+        if (userDto.username() != null) {
+            authUser.username = userDto.username()
+        }
+        if (userDto.isActive() != null) {
+            authUser.isActive = userDto.isActive()
+        }
         if (userDto.password() != null) {
             authUser.setPassword(passwordEncoder.encode(userDto.password()))
         }
         userService.save(authUser)
-        return ResponseEntity.ok(authUser)
+        return ResponseEntity.ok(new UserDTO(authUser.username, authUser.email, null, authUser.isActive))
     }
 
     @Operation(summary = "Deleting a user")
     @DeleteMapping("/delete")
     //@Transactional
     ResponseEntity<Map<String, String>> deleteUser(@AuthenticationPrincipal User user) {
-        postRepository.deleteByUser(user)
+        postService.deleteByUser(user)
         refreshTokenRepository.deleteByUser(user)
         userService.delete(user)
         return ResponseEntity.ok(Map.of("description", "User successfully deleted"))

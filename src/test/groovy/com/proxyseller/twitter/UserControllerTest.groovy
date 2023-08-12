@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.UserDTO
 import com.proxyseller.twitter.dto.TokenDTO
-import com.proxyseller.twitter.repository.UserRepository
+import com.proxyseller.twitter.service.UserService
+import com.proxyseller.twitter.springdata.IUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.http.MediaType
@@ -25,7 +26,7 @@ class UserControllerTest extends BasicItSpec {
     @Autowired
     ObjectMapper objectMapper
     @Autowired
-    UserRepository userRepository
+    UserService userService
 
     static def userId = null
     static def accessToken = null
@@ -37,7 +38,8 @@ class UserControllerTest extends BasicItSpec {
             def userPassword = "123456"
             def userDTO = new UserDTO(userName, email, userPassword, null)
         when:
-            userRepository.deleteByUsername(userName)
+            userService.deleteByUsername(userName)
+            userService.deleteByUsername("newUserName")
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/signup")
                 .content(objectMapper.writeValueAsString(userDTO))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -52,7 +54,7 @@ class UserControllerTest extends BasicItSpec {
                 responseDTO.accessToken() != null
                 responseDTO.refreshToken() != null
             }
-            userRepository.existsById(userId)
+        userService.existsById(userId)
     }
 
     @Unroll
@@ -68,13 +70,14 @@ class UserControllerTest extends BasicItSpec {
             def responseUser = objectMapper.readValue(response, User)
         then:
             with(responseUser) {
+                responseUser.username == newUserName
                 responseUser.email == newEmail
-                responseUser.id == userId
+                responseUser.isActive == isActive
             }
         where:
-            newUserName   || newEmail             || newPassword   || isActive
-            "newUserName" || "newEmail@gmail.com" || "newPassword" || true
-            null          || "second@gmail.com"   || null          || null
+            newUserName         || newEmail             || newPassword   || isActive
+            "newUserName"       || "newEmail@gmail.com" || "newPassword" || true
+            "secondUserName"    || "second@gmail.com"   || null          || false
     }
 
     def "step 3 delete user /api/users/delete"() {
@@ -88,6 +91,6 @@ class UserControllerTest extends BasicItSpec {
             def responseDTO = objectMapper.readValue(response, Map<String, String>)
         then:
             responseDTO.get("description") == "User successfully deleted"
-            !userRepository.existsById(userId)
+            !userService.existsById(userId)
     }
 }

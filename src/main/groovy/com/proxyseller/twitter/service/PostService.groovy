@@ -1,14 +1,13 @@
 package com.proxyseller.twitter.service
 
-
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.CommentDTO
 import com.proxyseller.twitter.dto.LikeDTO
 import com.proxyseller.twitter.dto.PostDTO
-import com.proxyseller.twitter.repository.CommentRepository
-import com.proxyseller.twitter.repository.LikeRepository
-import com.proxyseller.twitter.repository.PostRepository
+import com.proxyseller.twitter.springdata.IComment
+import com.proxyseller.twitter.springdata.ILike
+import com.proxyseller.twitter.springdata.IPost
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -16,11 +15,11 @@ import org.springframework.stereotype.Service
 class PostService {
 
     @Autowired
-    private PostRepository postRepository
+    private IPost postRepository
     @Autowired
-    CommentRepository commentRepository
+    private IComment commentRepository
     @Autowired
-    LikeRepository likeRepository
+    private ILike likeRepository
 
 
     Post save(Post post) {
@@ -45,6 +44,10 @@ class PostService {
 
     void delete(Post post) {
         postRepository.delete(post)
+    }
+
+    void deleteByUser(User user) {
+        postRepository.deleteByUser(user)
     }
 
     ArrayList<PostDTO> findPostsAndCommentsAndLikes(posts) {

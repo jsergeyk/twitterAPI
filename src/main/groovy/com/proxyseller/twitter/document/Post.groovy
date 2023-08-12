@@ -1,25 +1,26 @@
 package com.proxyseller.twitter.document
 
-import com.mongodb.lang.NonNull
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
+import javax.validation.constraints.NotNull
 
 @Document
 class Post {
     @Id
     String id
+    @NotNull
     @DocumentReference
     User user
-    @NonNull
+    @NotNull
     Date createDate
-    @NonNull
+    @NotNull
     String message
 
     Post() {
     }
 
-    Post(String id, User user, @NonNull Date createDate, @NonNull String message) {
+    Post(String id, User user, @NotNull Date createDate, @NotNull String message) {
         this.id = id
         this.user = user
         this.createDate = createDate

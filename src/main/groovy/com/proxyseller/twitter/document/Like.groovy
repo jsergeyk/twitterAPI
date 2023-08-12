@@ -1,10 +1,10 @@
 package com.proxyseller.twitter.document
 
-import com.mongodb.lang.NonNull
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.CompoundIndex
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
+import javax.validation.constraints.NotNull
 
 
 @Document
@@ -12,13 +12,13 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference
 class Like {
     @Id
     String id
-    @NonNull
+    @NotNull
     @DocumentReference
     Post post
-    @NonNull
+    @NotNull
     @DocumentReference
     User user
-    @NonNull
+    @NotNull
     Date createDate
 
     Like() {

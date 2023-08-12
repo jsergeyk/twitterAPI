@@ -1,7 +1,7 @@
 package com.proxyseller.twitter.service
 
 import com.proxyseller.twitter.document.User
-import com.proxyseller.twitter.repository.UserRepository
+import com.proxyseller.twitter.springdata.IUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 class UserService implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository
+    private IUser userRepository
 
     @Override
     User loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,5 +38,13 @@ class UserService implements UserDetailsService {
 
     void delete(User user) {
         userRepository.delete(user)
+    }
+
+    void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username)
+    }
+
+    boolean existsById(String id) {
+        userRepository.existsById(id)
     }
 }

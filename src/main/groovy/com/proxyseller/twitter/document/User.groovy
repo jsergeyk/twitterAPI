@@ -1,13 +1,13 @@
 package com.proxyseller.twitter.document
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.mongodb.lang.NonNull
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import javax.validation.constraints.NotNull
 
 @Document
 class User implements UserDetails {
@@ -15,13 +15,13 @@ class User implements UserDetails {
     @Id
     String id
     @Indexed(unique = true)
-    @NonNull
+    @NotNull
     String username
     @Indexed(unique = true)
-    @NonNull
+    @NotNull
     String email
     @JsonIgnore
-    @NonNull
+    @NotNull
     String password
     Set<SimpleGrantedAuthority> authorities
     Boolean isActive

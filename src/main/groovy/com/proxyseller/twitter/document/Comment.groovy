@@ -1,23 +1,23 @@
 package com.proxyseller.twitter.document
 
-import com.mongodb.lang.NonNull
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.DocumentReference
+import javax.validation.constraints.NotNull
 
 @Document
 class Comment {
     @Id
     String id
     @DocumentReference
-    @NonNull
+    @NotNull
     Post post
-    @NonNull
+    @NotNull
     @DocumentReference
     User user
-    @NonNull
+    @NotNull
     Date createDate
-    @NonNull
+    @NotNull
     String message
 
     Comment() {

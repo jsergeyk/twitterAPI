@@ -5,9 +5,9 @@ import com.proxyseller.twitter.document.User;
 import com.proxyseller.twitter.dto.LoginDTO;
 import com.proxyseller.twitter.dto.UserDTO;
 import com.proxyseller.twitter.dto.TokenDTO;
-import com.proxyseller.twitter.repository.RefreshTokenRepository;
 import com.proxyseller.twitter.security.JwtHelper;
 import com.proxyseller.twitter.service.UserService
+import com.proxyseller.twitter.springdata.IRefreshToken
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ import javax.validation.Valid;
 class AuthController {
 
     @Autowired
-    private RefreshTokenRepository refreshTokenRepository
+    private IRefreshToken refreshTokenRepository
     @Autowired
     private AuthenticationManager authenticationManager
     @Autowired
