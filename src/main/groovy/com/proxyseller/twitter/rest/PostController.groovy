@@ -46,12 +46,12 @@ class PostController {
     }
 
     @Operation(summary = "Get another user's posts")
-    @GetMapping(value = "/user/{userId}")
-    ResponseEntity<?> getPostsOtherUser(@AuthenticationPrincipal User user, @PathVariable String userId) {
-        if (userId == null || !userService.findById(userId)) {
+    @GetMapping(value = "/user/{id}")
+    ResponseEntity<?> getPostsOtherUser(@AuthenticationPrincipal User user, @PathVariable String id) {
+        if (id == null || !userService.findById(id)) {
             return ResponseEntity.badRequest().body(Map.of("description", "User cannot be self-followed"))
         }
-        def posts = postService.findByUser_id(userId)
+        def posts = postService.findByUser_id(id)
         def postsDTO = postService.findPostsAndCommentsAndLikes(posts)
         return ResponseEntity.ok(postsDTO)
     }
