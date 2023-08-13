@@ -44,10 +44,14 @@ class PostService {
 
     void delete(Post post) {
         postRepository.delete(post)
+        commentRepository.deleteByPost(post)
+        likeRepository.deleteByPost(post)
     }
 
     void deleteByUser(User user) {
-        postRepository.deleteByUser(user)
+        List<Post> posts = postRepository.deleteByUser(user)
+        commentRepository.deleteByPostIn(posts)
+        likeRepository.deleteByPostIn(posts)
     }
 
     boolean existsById(String id) {
@@ -60,13 +64,13 @@ class PostService {
         def likes = likeRepository.findByPostIn(posts)
         posts.toSet().forEach {post ->{
             def commentsByPost = comments.findAll { comment -> comment.post == post }
-                    .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)}
+                .collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)}
             def likesByPost = likes.findAll { like -> like.post == post }
-                    .collect {like -> return new LikeDTO(like.id, like.post.id, like.user.id, like.createDate)}
+                .collect {like -> return new LikeDTO(like.id, like.post.id, like.user.id, like.createDate)}
             def postDTO = new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost, likesByPost)
             response.add(postDTO)
         }}
-        return response
+        return response.sort {post1,post2 -> post2.createDate() <=> post1.createDate()}
     }
 
     PostDTO findPostAndCommentsAndLikes(Post post) {

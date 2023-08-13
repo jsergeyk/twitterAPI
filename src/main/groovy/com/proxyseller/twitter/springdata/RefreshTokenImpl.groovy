@@ -36,6 +36,6 @@ class RefreshTokenImpl implements IRefreshToken {
 
     @Override
     void deleteByUser(User user) {
-        refreshTokenRepository.delete(user)
+        refreshTokenRepository.deleteByUser(user)
     }
 }

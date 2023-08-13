@@ -12,4 +12,8 @@ interface IFollowing {
         void delete(Following like)
 
         List<Following> findByUser(User user)
+
+        void deleteByUser(User user)
+
+        void deleteByFollowingUser(User user)
 }

@@ -33,4 +33,14 @@ class FollowingImpl implements IFollowing {
     List<Following> findByUser(User user) {
         return followingRepository.findByUser(user)
     }
+
+    @Override
+    void deleteByUser(User user) {
+        followingRepository.deleteByUser(user)
+    }
+
+    @Override
+    void deleteByFollowingUser(User user) {
+        followingRepository.deleteByFollowingUser(user)
+    }
 }

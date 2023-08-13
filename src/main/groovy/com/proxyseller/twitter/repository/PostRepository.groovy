@@ -12,6 +12,6 @@ interface PostRepository extends MongoRepository<Post, String> {
 
     List<Post> findByUserIn(List<User> user)
 
-    void deleteByUser(User user)
+    List<Post> deleteByUser(User user)
 
 }

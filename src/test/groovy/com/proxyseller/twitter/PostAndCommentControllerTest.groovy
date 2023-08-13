@@ -1,6 +1,7 @@
 package com.proxyseller.twitter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.proxyseller.twitter.dto.CommentDTO
 import com.proxyseller.twitter.dto.PostDTO
 import com.proxyseller.twitter.dto.TokenDTO
 import com.proxyseller.twitter.dto.UserDTO
@@ -19,7 +20,7 @@ import spock.lang.Unroll
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Stepwise
-class PostControllerTest extends BasicItSpec {
+class PostAndCommentControllerTest extends BasicItSpec {
 
     @Autowired
     MockMvc mockMvc
@@ -46,8 +47,7 @@ class PostControllerTest extends BasicItSpec {
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/signup")
                 .content(objectMapper.writeValueAsString(userDTO))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200))
-                .andReturn().response.contentAsString
+            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200)).andReturn().response.contentAsString
             def responseDTO = objectMapper.readValue(response, TokenDTO)
             userId = responseDTO.userId()
             accessToken = responseDTO.accessToken()
@@ -68,17 +68,17 @@ class PostControllerTest extends BasicItSpec {
                     .content(objectMapper.writeValueAsString(postDTO))
                     .header("Authorization", "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON_VALUE))
-            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200))
-                    .andReturn().response.contentAsString
+            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200)).andReturn().response.contentAsString
             def responsePost = objectMapper.readValue(response, PostDTO)
             postId = responsePost.id()
         then:
             with(responsePost) {
+                responsePost.userId() == userId
                 responsePost.message() == message
             }
         where:
             message             || createDate
-            "twit1. Just Try"   || null
+            "first twit. Just Try"   || null
             "some twit2."       || null
     }
 
@@ -90,11 +90,11 @@ class PostControllerTest extends BasicItSpec {
                     .content(objectMapper.writeValueAsString(postDTO))
                     .header("Authorization", "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON_VALUE))
-            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200))
-                    .andReturn().response.contentAsString
+            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200)).andReturn().response.contentAsString
             def responsePost = objectMapper.readValue(response, PostDTO)
         then:
             with(responsePost) {
+                responsePost.userId() == userId
                 responsePost.message() == message
             }
         where:
@@ -103,7 +103,42 @@ class PostControllerTest extends BasicItSpec {
             "edit2 some twit2."       || null
     }
 
-    def "step 4 method DELETE post /api/posts/{id}"() {
+    @Unroll
+    def "step 4 method POST comment /api/comments"() {
+        when:
+            def commentDTO = new CommentDTO(null, postId, userId, message, createDate)
+            def resultAction = mockMvc.perform(MockMvcRequestBuilders.post("/api/comments")
+                    .content(objectMapper.writeValueAsString(commentDTO))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200)).andReturn().response.contentAsString
+            def responseComment = objectMapper.readValue(response, CommentDTO)
+        then:
+            with(responseComment) {
+                responseComment.id() != null
+                responseComment.postId() == postId
+                responseComment.userId() == userId
+                responseComment.message() == message
+            }
+        where:
+            message              || createDate
+            "my first comment"   || null
+            "my comment 2"       || null
+    }
+
+    @Unroll
+    def "step 5 method GET comment /api/comments/post/{id}"() {
+        when:
+            def resultAction = mockMvc.perform(MockMvcRequestBuilders.get("/api/comments/post/" + postId)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+            def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200)).andReturn().response.contentAsString
+            def comments = objectMapper.readValue(response, List<CommentDTO>)
+        then:
+            comments.size() == 2
+    }
+
+    def "step 6 method DELETE post /api/posts/{id}"() {
         given:
         when:
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.delete("/api/posts/" + postId)
@@ -114,7 +149,7 @@ class PostControllerTest extends BasicItSpec {
             !postService.existsById(postId)
     }
 
-    def "step 5 method DELETE user /api/users/{id}"() {
+    def "step 7 method DELETE user /api/users/{id}"() {
         given:
         when:
             def resultAction = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)

@@ -9,4 +9,8 @@ interface CommentRepository extends MongoRepository<Comment, String> {
     List<Comment> findByPost(Post post)
 
     List<Comment> findByPostIn(List<Post> posts)
+
+    void deleteByPost(Post post)
+
+    void deleteByPostIn(List<Post> posts)
 }

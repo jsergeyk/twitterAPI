@@ -14,4 +14,8 @@ interface IComment {
         List<Comment> findByPostIn(List<Post> posts)
 
         void delete(Comment comment)
+
+        void deleteByPost(Post post)
+
+        void deleteByPostIn(List<Post> posts)
 }

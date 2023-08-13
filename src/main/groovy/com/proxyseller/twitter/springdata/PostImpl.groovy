@@ -40,7 +40,7 @@ class PostImpl implements IPost {
     }
 
     @Override
-    void deleteByUser(User user) {
+    List<Post> deleteByUser(User user) {
         postRepository.deleteByUser(user)
     }
 

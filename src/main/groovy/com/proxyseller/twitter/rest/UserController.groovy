@@ -2,9 +2,7 @@ package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.UserDTO
-import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
-import com.proxyseller.twitter.springdata.IRefreshToken
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -19,10 +17,6 @@ class UserController {
 
     @Autowired
     private UserService userService
-    @Autowired
-    private PostService postService
-    @Autowired
-    private IRefreshToken refreshTokenRepository
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -62,8 +56,6 @@ class UserController {
     @PreAuthorize("#user.id == #id")
     //@Transactional
     ResponseEntity<Map<String, String>> deleteUser(@AuthenticationPrincipal User user,  @PathVariable String id) {
-        postService.deleteByUser(user)
-        refreshTokenRepository.deleteByUser(user)
         userService.delete(user)
         return ResponseEntity.ok(Map.of("description", "User successfully deleted"))
     }

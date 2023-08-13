@@ -17,7 +17,7 @@ interface IPost {
 
         void delete(Post post)
 
-        void deleteByUser(User user)
+        List<Post> deleteByUser(User user)
 
         boolean existsById(String id)
 }

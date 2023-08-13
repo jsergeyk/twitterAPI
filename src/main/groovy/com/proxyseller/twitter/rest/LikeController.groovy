@@ -28,8 +28,7 @@ class LikeController {
         } else {
             def like = new Like(null, post.get(), user, new Date())
             likeService.save(like)
-            return ResponseEntity.ok(Map.of("id", like.id,"postId", like.post.id,"userId", like.user.id,"createDate",
-                    like.createDate))
+            return ResponseEntity.ok(new LikeDTO(like.id, like.post.id, like.user.id, like.createDate))
         }
     }
 }

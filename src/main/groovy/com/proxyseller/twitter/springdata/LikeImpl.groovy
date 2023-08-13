@@ -45,4 +45,14 @@ class LikeImpl implements ILike {
     Like findByPostAndUser(Post post, User user) {
         return likeRepository.findByPostAndUser(post, user)
     }
+
+    @Override
+    void deleteByPost(Post post) {
+        likeRepository.deleteByPost(post)
+    }
+
+    @Override
+    void deleteByPostIn(List<Post> posts){
+        likeRepository.deleteByPostIn(posts)
+    }
 }

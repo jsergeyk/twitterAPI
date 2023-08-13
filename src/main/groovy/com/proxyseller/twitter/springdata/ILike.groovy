@@ -12,6 +12,10 @@ interface ILike {
 
         void delete(Like like)
 
+        void deleteByPost(Post post)
+
+        void deleteByPostIn(List<Post> posts)
+
         List<Like> findByPost(Post post)
 
         List<Like> findByPostIn(List<Post> posts)

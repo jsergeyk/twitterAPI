@@ -10,4 +10,8 @@ interface LikeRepository extends MongoRepository<Like, String> {
     List<Like> findByPostIn(List<Post> posts)
 
     Like findByPostAndUser(Post post, User user)
+
+    void deleteByPost(Post post)
+
+    void deleteByPostIn(List<Post> posts)
 }

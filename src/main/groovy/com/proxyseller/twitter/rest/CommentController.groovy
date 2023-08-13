@@ -33,8 +33,7 @@ class CommentController {
         }
         def comment = new Comment(null, post.get(), user, new Date(), dto.message())
         commentService.save(comment)
-        return ResponseEntity.ok(Map.of("id", comment.id,"postId", comment.post.id,"userId", comment.user.id,"createDate",
-                comment.createDate, "message", comment.message))
+        return ResponseEntity.ok(new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate))
     }
 
     @Operation(summary = "Get comments of the post")
@@ -50,6 +49,6 @@ class CommentController {
         def comments = commentService.findByPost(post.get())
         def commentsDTO = new ArrayList<CommentDTO>()
         comments.forEach { comment -> commentsDTO.add(new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)) }
-        return ResponseEntity.ok(commentsDTO)
+        return ResponseEntity.ok(commentsDTO.sort {commentDTO -> commentDTO.createDate()})
     }
 }

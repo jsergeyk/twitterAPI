@@ -39,4 +39,12 @@ class FollowingService {
         }
         return followingUser
     }
+
+    void deleteByUser(User user) {
+        followingRepository.deleteByUser(user)
+    }
+
+    void deleteByFollowingUser(User user) {
+        followingRepository.deleteByFollowingUser(user)
+    }
 }

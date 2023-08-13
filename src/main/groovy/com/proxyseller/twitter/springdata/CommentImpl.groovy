@@ -38,4 +38,14 @@ class CommentImpl implements IComment {
     void delete(Comment comment) {
         commentRepository.delete(comment)
     }
+
+    @Override
+    void deleteByPost(Post post) {
+        commentRepository.deleteByPost(post)
+    }
+
+    @Override
+    void deleteByPostIn(List<Post> posts) {
+        commentRepository.deleteByPostIn(posts)
+    }
 }
