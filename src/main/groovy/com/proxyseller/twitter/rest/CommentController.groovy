@@ -35,20 +35,4 @@ class CommentController {
         commentService.save(comment)
         return ResponseEntity.ok(new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate))
     }
-
-    @Operation(summary = "Get comments of the post")
-    @GetMapping (value = "/post/{id}")
-    ResponseEntity<?> getCommentsByPost(@AuthenticationPrincipal User user, @PathVariable String id) {
-        if (!id) {
-            throw new PropertyNotFoundException("id")
-        }
-        def post = postService.findById(id)
-        if (!post.isPresent()) {
-            throw new PropertyNotFoundException(id)
-        }
-        def comments = commentService.findByPost(post.get())
-        def commentsDTO = new ArrayList<CommentDTO>()
-        comments.forEach { comment -> commentsDTO.add(new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)) }
-        return ResponseEntity.ok(commentsDTO.sort {commentDTO -> commentDTO.createDate()})
-    }
 }

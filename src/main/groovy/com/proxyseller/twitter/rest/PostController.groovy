@@ -2,7 +2,10 @@ package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
+import com.proxyseller.twitter.dto.CommentDTO
 import com.proxyseller.twitter.dto.PostDTO
+import com.proxyseller.twitter.exception.PropertyNotFoundException
+import com.proxyseller.twitter.service.CommentService
 import com.proxyseller.twitter.service.FollowingService
 import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
@@ -21,6 +24,8 @@ class PostController {
     @Autowired
     PostService postService
     @Autowired
+    CommentService commentService
+    @Autowired
     FollowingService followingService
     @Autowired
     UserService userService
@@ -34,7 +39,7 @@ class PostController {
         return ResponseEntity.ok(new PostDTO(post.id, post.user.id, post.message, post.createDate, null, null))
     }
 
-    @Operation(summary = "Get the user's posts with posts of the people he followed (along with likes and comments)")
+    @Operation(summary = "Get the current user's posts with posts of the people he followed (along with likes and comments)")
     @GetMapping
     ResponseEntity<?> getPosts(@AuthenticationPrincipal User user) {
         def posts = postService.findByUser(user)
@@ -45,15 +50,20 @@ class PostController {
         return ResponseEntity.ok(postsDTO)
     }
 
-    @Operation(summary = "Get another user's posts")
-    @GetMapping(value = "/user/{id}")
-    ResponseEntity<?> getPostsOtherUser(@AuthenticationPrincipal User user, @PathVariable String id) {
-        if (id == null || !userService.findById(id)) {
-            return ResponseEntity.badRequest().body(Map.of("description", "User cannot be self-followed"))
+    @Operation(summary = "Get comments of the post")
+    @GetMapping (value = "/{id}/comments")
+    ResponseEntity<?> getCommentsByPost(@AuthenticationPrincipal User user, @PathVariable String id) {
+        if (!id) {
+            throw new PropertyNotFoundException("id")
         }
-        def posts = postService.findByUser_id(id)
-        def postsDTO = postService.findPostsAndCommentsAndLikes(posts)
-        return ResponseEntity.ok(postsDTO)
+        def post = postService.findById(id)
+        if (!post.isPresent()) {
+            throw new PropertyNotFoundException(id)
+        }
+        def comments = commentService.findByPost(post.get())
+        def commentsDTO = new ArrayList<CommentDTO>()
+        comments.forEach { comment -> commentsDTO.add(new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)) }
+        return ResponseEntity.ok(commentsDTO.sort {commentDTO -> commentDTO.createDate()})
     }
 
     @Operation(summary = "Editing a post")

@@ -22,6 +22,10 @@ class LikeService {
         return likeRepository.save(like)
     }
 
+    Optional<Like> findById(String id) {
+        return likeRepository.findById(id);
+    }
+
     void delete(Like like) {
         likeRepository.delete(like)
     }

@@ -127,9 +127,9 @@ class PostAndCommentControllerTest extends BasicItSpec {
     }
 
     @Unroll
-    def "step 5 method GET comment /api/comments/post/{id}"() {
+    def "step 5 method GET comment /api/posts/{id}/comments"() {
         when:
-            def resultAction = mockMvc.perform(MockMvcRequestBuilders.get("/api/comments/post/" + postId)
+            def resultAction = mockMvc.perform(MockMvcRequestBuilders.get("/api/posts/" + postId + "/comments")
                     .header("Authorization", "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON_VALUE))
             def response = resultAction.andExpect(MockMvcResultMatchers.status().is(200)).andReturn().response.contentAsString

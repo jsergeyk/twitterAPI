@@ -2,6 +2,7 @@ package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.UserDTO
+import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +18,8 @@ class UserController {
 
     @Autowired
     private UserService userService
+    @Autowired
+    PostService postService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -49,6 +52,17 @@ class UserController {
         }
         userService.save(authUser)
         return ResponseEntity.ok(new UserDTO(authUser.username, authUser.email, null, authUser.isActive))
+    }
+
+    @Operation(summary = "Get another user's posts")
+    @GetMapping(value = "/{id}/posts")
+    ResponseEntity<?> getPostsOtherUser(@AuthenticationPrincipal User user, @PathVariable String id) {
+        if (id == null || !userService.findById(id)) {
+            return ResponseEntity.badRequest().body(Map.of("description", "User cannot be self-followed"))
+        }
+        def posts = postService.findByUser_id(id)
+        def postsDTO = postService.findPostsAndCommentsAndLikes(posts)
+        return ResponseEntity.ok(postsDTO)
     }
 
     @Operation(summary = "Deleting a current user")
