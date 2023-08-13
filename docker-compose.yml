@@ -9,6 +9,23 @@ services:
     volumes:
       - mongodata:/data/db
 
+  mongo-init:
+    image: mongo:latest
+    restart: "no"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    command: >
+      mongo --host mongodb:27017 --eval
+      '
+      rs.initiate( {
+         _id : "rs0",
+         members: [
+            { _id: 0, host: "localhost:27017" }
+         ]
+      })
+      '
+
   twitterapp:
     image: twitterapp
     ports:
