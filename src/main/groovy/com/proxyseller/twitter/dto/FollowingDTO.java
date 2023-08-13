@@ -1,4 +1,4 @@
 package com.proxyseller.twitter.dto;
 
-public record FollowingDTO(String followingUserId) {
+public record FollowingDTO(String userId, String followingUserId) {
 }

@@ -30,17 +30,16 @@ class FollowingController {
         } else {
             def following = new Following(null, user, followingUser.get())
             followingService.save(following)
-            return ResponseEntity.ok(Map.of("id", following.id,"userId", user.id,"followingUser", following.followingUser.id))
+            return ResponseEntity.ok(new FollowingDTO(user.id, following.followingUser.id))
         }
     }
 
     @Operation(summary = "Unfollowing on the user")
-    @DeleteMapping
-    ResponseEntity<?> deleteFollowing(@AuthenticationPrincipal User user, @RequestBody FollowingDTO dto) {
-        def followingUser = followingService.findFollowingUser(dto)
+    @DeleteMapping("/{id}")
+    ResponseEntity<?> deleteFollowing(@AuthenticationPrincipal User user, @PathVariable String id) {
         def followings = followingService.findByUser(user)
-        if (followings*.followingUser.contains(followingUser.get())) {
-            followingService.delete(followings.findAll{it.followingUser == followingUser.get()}.first())
+        if (followings*.followingUser*.id.contains(id)) {
+            followingService.delete(followings.findAll{it.followingUser.id == id}.first())
             return ResponseEntity.ok(Map.of("description", "Unfollowing success"))
         } else {
             return ResponseEntity.badRequest().body(Map.of("description", "The user has not been followed"))
