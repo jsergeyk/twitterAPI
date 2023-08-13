@@ -26,10 +26,21 @@ class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Operation(summary = "Editing a user")
-    @PatchMapping(value = "/edit/{id}")
+    @Operation(summary = "Editing a current user")
+    @PutMapping(value = "/{id}")
     @PreAuthorize("#authUser.id == #id")
-    ResponseEntity<?> editPost(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody UserDTO userDto) {
+    ResponseEntity<?> editUserPut(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody UserDTO userDto) {
+        authUser.email = userDto.email()
+        authUser.username = userDto.username()
+        authUser.isActive = userDto.isActive()
+        userService.save(authUser)
+        return ResponseEntity.ok(new UserDTO(authUser.username, authUser.email, null, authUser.isActive))
+    }
+
+    @Operation(summary = "Editing a user")
+    @PatchMapping(value = "/{id}")
+    @PreAuthorize("#authUser.id == #id")
+    ResponseEntity<?> editUser(@AuthenticationPrincipal User authUser, @PathVariable String id, @RequestBody UserDTO userDto) {
         if (userDto.email() != null) {
             authUser.email = userDto.email()
         }
@@ -46,10 +57,11 @@ class UserController {
         return ResponseEntity.ok(new UserDTO(authUser.username, authUser.email, null, authUser.isActive))
     }
 
-    @Operation(summary = "Deleting a user")
-    @DeleteMapping("/delete")
+    @Operation(summary = "Deleting a current user")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("#user.id == #id")
     //@Transactional
-    ResponseEntity<Map<String, String>> deleteUser(@AuthenticationPrincipal User user) {
+    ResponseEntity<Map<String, String>> deleteUser(@AuthenticationPrincipal User user,  @PathVariable String id) {
         postService.deleteByUser(user)
         refreshTokenRepository.deleteByUser(user)
         userService.delete(user)

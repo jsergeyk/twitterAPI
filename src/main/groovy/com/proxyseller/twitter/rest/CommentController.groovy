@@ -22,7 +22,7 @@ class CommentController {
     PostService postService
 
     @Operation(summary = "Commenting on the post")
-    @PostMapping(value = "/add")
+    @PostMapping
     ResponseEntity<?> addComment(@AuthenticationPrincipal User user, @RequestBody CommentDTO dto) {
         if (!dto.postId()) {
             throw new PropertyNotFoundException("postId")
@@ -38,14 +38,14 @@ class CommentController {
     }
 
     @Operation(summary = "Get comments of the post")
-    @GetMapping (value = "/post/{postId}")
-    ResponseEntity<?> getCommentsByPost(@AuthenticationPrincipal User user, @PathVariable String postId) {
-        if (!postId) {
-            throw new PropertyNotFoundException("postId")
+    @GetMapping (value = "/post/{id}")
+    ResponseEntity<?> getCommentsByPost(@AuthenticationPrincipal User user, @PathVariable String id) {
+        if (!id) {
+            throw new PropertyNotFoundException("id")
         }
-        def post = postService.findById(postId)
+        def post = postService.findById(id)
         if (!post.isPresent()) {
-            throw new PropertyNotFoundException(postId)
+            throw new PropertyNotFoundException(id)
         }
         def comments = commentService.findByPost(post.get())
         def commentsDTO = new ArrayList<CommentDTO>()

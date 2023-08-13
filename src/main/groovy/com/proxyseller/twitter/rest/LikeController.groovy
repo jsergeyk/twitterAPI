@@ -18,7 +18,7 @@ class LikeController {
     LikeService likeService
 
     @Operation(summary = "Add/remove like")
-    @PostMapping(value = "/add")
+    @PostMapping
     ResponseEntity<?> addLike(@AuthenticationPrincipal User user, @RequestBody LikeDTO dto) {
         def post = likeService.findPost(dto)
         def existingLike = likeService.findByPostAndUser(post.get(), user)

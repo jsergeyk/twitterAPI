@@ -30,6 +30,10 @@ class LikeService {
         return likeRepository.findByPostAndUser(post, user)
     }
 
+    List<Like> findByPost(Post post) {
+        return likeRepository.findByPost(post)
+    }
+
     Optional<Post> findPost(LikeDTO dto) {
         if (!dto.postId()) {
             throw new PropertyNotFoundException(dto.postId())

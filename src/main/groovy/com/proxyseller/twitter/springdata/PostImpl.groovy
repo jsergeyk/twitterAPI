@@ -48,4 +48,9 @@ class PostImpl implements IPost {
     void delete(Post post) {
         postRepository.delete(post)
     }
+
+    @Override
+    boolean existsById(String id) {
+        postRepository.existsById(id)
+    }
 }

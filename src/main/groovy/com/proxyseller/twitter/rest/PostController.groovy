@@ -2,6 +2,7 @@ package com.proxyseller.twitter.rest
 
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
+import com.proxyseller.twitter.dto.PostDTO
 import com.proxyseller.twitter.service.FollowingService
 import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
@@ -25,12 +26,12 @@ class PostController {
     UserService userService
 
     @Operation(summary = "Creating a post")
-    @PostMapping(value = "/add")
+    @PostMapping
     ResponseEntity<?> addPost(@AuthenticationPrincipal User user, @RequestBody Post post) {
         post.setUser(user)
         post.setCreateDate(new Date())
         postService.save(post)
-        return ResponseEntity.ok(Map.of("id", post.id,"createDate", post.createDate, "message", post.message))
+        return ResponseEntity.ok(new PostDTO(post.id, post.user.id, post.message, post.createDate, null, null))
     }
 
     @Operation(summary = "Get the user's posts with posts of the people he followed (along with likes and comments)")
@@ -56,20 +57,35 @@ class PostController {
     }
 
     @Operation(summary = "Editing a post")
-    @PatchMapping(value = "/edit/{id}")
-    ResponseEntity<?> editPost(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Post post) {
+    @PutMapping(value = "/{id}")
+    ResponseEntity<?> editPostPut(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Post postDto) {
         Post existingPost = postService.findById(id).orElseThrow()
         if (existingPost.user == user) {
-            BeanUtils.copyProperties(post, existingPost, "id", "createDate", "user")
+            BeanUtils.copyProperties(postDto, existingPost, "id", "createDate", "user")
             postService.save(existingPost)
         } else {
             throw new AccessDeniedException("Access denied")
         }
-        return ResponseEntity.ok(Map.of("id", existingPost.id,"createDate", existingPost.createDate, "message", existingPost.message))
+        def postDTO = postService.findPostAndCommentsAndLikes(existingPost)
+        return ResponseEntity.ok(postDTO)
+    }
+
+    @Operation(summary = "Editing a post")
+    @PatchMapping(value = "/{id}")
+    ResponseEntity<?> editPost(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Post postDto) {
+        Post existingPost = postService.findById(id).orElseThrow()
+        if (existingPost.user == user) {
+            existingPost.message = postDto.getMessage()
+            postService.save(existingPost)
+        } else {
+            throw new AccessDeniedException("Access denied")
+        }
+        def postDTO = postService.findPostAndCommentsAndLikes(existingPost)
+        return ResponseEntity.ok(postDTO)
     }
 
     @Operation(summary = "Deleting a post")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<Map<String, String>> deletePost(@AuthenticationPrincipal User user, @PathVariable String id) {
         def post = postService.findById(id)
         if (post.isPresent()) {

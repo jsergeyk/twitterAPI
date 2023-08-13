@@ -18,4 +18,6 @@ interface IPost {
         void delete(Post post)
 
         void deleteByUser(User user)
+
+        boolean existsById(String id)
 }

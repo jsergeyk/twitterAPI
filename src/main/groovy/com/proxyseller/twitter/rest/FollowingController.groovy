@@ -18,7 +18,7 @@ class FollowingController {
     FollowingService followingService
 
     @Operation(summary = "Following on the user")
-    @PostMapping(value = "/add")
+    @PostMapping
     ResponseEntity<?> addFollowing(@AuthenticationPrincipal User user, @RequestBody FollowingDTO dto) {
         if (user.id == dto.followingUserId()) {
             return ResponseEntity.badRequest().body(Map.of("description", "User cannot be self-followed"))

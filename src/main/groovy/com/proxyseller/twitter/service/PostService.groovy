@@ -50,7 +50,11 @@ class PostService {
         postRepository.deleteByUser(user)
     }
 
-    ArrayList<PostDTO> findPostsAndCommentsAndLikes(posts) {
+    boolean existsById(String id) {
+        postRepository.existsById(id)
+    }
+
+    ArrayList<PostDTO> findPostsAndCommentsAndLikes(List<Post> posts) {
         def response = new ArrayList<PostDTO>()
         def comments = commentRepository.findByPostIn(posts)
         def likes = likeRepository.findByPostIn(posts)
@@ -63,5 +67,13 @@ class PostService {
             response.add(postDTO)
         }}
         return response
+    }
+
+    PostDTO findPostAndCommentsAndLikes(Post post) {
+        def comments = commentRepository.findByPost(post)
+        def likes = likeRepository.findByPost(post)
+        def commentsByPost = comments.collect {comment -> return new CommentDTO(comment.id, comment.post.id, comment.user.id, comment.message, comment.createDate)}
+        def likesByPost = likes.collect {like -> return new LikeDTO(like.id, like.post.id, like.user.id, like.createDate)}
+        return new PostDTO(post.id, post.user.id, post.message, post.createDate, commentsByPost, likesByPost)
     }
 }
