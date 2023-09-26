@@ -1,10 +1,11 @@
-package com.proxyseller.twitter.repository
+package com.proxyseller.twitter.repositories
 
 import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
+import com.proxyseller.twitter.repositories.customized.CustomizedPostRepository
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface PostRepository extends MongoRepository<Post, String> {
+interface PostRepository extends MongoRepository<Post, String>, CustomizedPostRepository {
 
     List<Post> findByUser(User user)
 

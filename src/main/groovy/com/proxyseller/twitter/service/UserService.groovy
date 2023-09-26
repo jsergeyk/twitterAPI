@@ -1,9 +1,8 @@
 package com.proxyseller.twitter.service
 
 import com.proxyseller.twitter.document.User
-import com.proxyseller.twitter.springdata.IRefreshToken
-import com.proxyseller.twitter.springdata.IUser
-import org.springframework.beans.factory.annotation.Autowired
+import com.proxyseller.twitter.repositories.RefreshTokenRepository
+import com.proxyseller.twitter.repositories.UserRepository
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
@@ -11,14 +10,17 @@ import org.springframework.stereotype.Service
 @Service
 class UserService implements UserDetailsService {
 
-    @Autowired
-    private IUser userRepository
-    @Autowired
-    private IRefreshToken refreshTokenRepository
-    @Autowired
+    private UserRepository userRepository
+    private RefreshTokenRepository refreshTokenRepository
     private PostService postService
-    @Autowired
     private FollowingService followingService
+
+    UserService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, PostService postService, FollowingService followingService) {
+        this.userRepository = userRepository
+        this.refreshTokenRepository = refreshTokenRepository
+        this.postService = postService
+        this.followingService = followingService
+    }
 
     @Override
     User loadUserByUsername(String username) throws UsernameNotFoundException {

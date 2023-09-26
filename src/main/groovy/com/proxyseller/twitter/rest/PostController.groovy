@@ -8,10 +8,8 @@ import com.proxyseller.twitter.exception.PropertyNotFoundException
 import com.proxyseller.twitter.service.CommentService
 import com.proxyseller.twitter.service.FollowingService
 import com.proxyseller.twitter.service.PostService
-import com.proxyseller.twitter.service.UserService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.BeanUtils
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -21,14 +19,15 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/posts")
 class PostController {
 
-    @Autowired
-    PostService postService
-    @Autowired
-    CommentService commentService
-    @Autowired
-    FollowingService followingService
-    @Autowired
-    UserService userService
+    private PostService postService
+    private CommentService commentService
+    private FollowingService followingService
+
+    PostController(PostService postService, CommentService commentService, FollowingService followingService) {
+        this.postService = postService
+        this.commentService = commentService
+        this.followingService = followingService
+    }
 
     @Operation(summary = "Creating a post")
     @PostMapping

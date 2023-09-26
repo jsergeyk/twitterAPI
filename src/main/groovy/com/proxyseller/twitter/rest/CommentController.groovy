@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/comments")
 class CommentController {
 
-    @Autowired
-    CommentService commentService
-    @Autowired
-    PostService postService
+    private CommentService commentService
+    private PostService postService
+
+    CommentController(CommentService commentService, PostService postService) {
+        this.commentService = commentService
+        this.postService = postService
+    }
 
     @Operation(summary = "Commenting on the post")
     @PostMapping

@@ -5,7 +5,6 @@ import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.FollowingDTO
 import com.proxyseller.twitter.service.FollowingService
 import io.swagger.v3.oas.annotations.Operation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -14,8 +13,11 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/following")
 class FollowingController {
 
-    @Autowired
-    FollowingService followingService
+    private FollowingService followingService
+
+    FollowingController(FollowingService followingService) {
+        this.followingService = followingService
+    }
 
     @Operation(summary = "Following on the user")
     @PostMapping

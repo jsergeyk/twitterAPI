@@ -5,7 +5,6 @@ import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.LikeDTO
 import com.proxyseller.twitter.service.LikeService
 import io.swagger.v3.oas.annotations.Operation
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -15,8 +14,11 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/likes")
 class LikeController {
 
-    @Autowired
-    LikeService likeService
+    private LikeService likeService
+
+    LikeController(LikeService likeService) {
+        this.likeService = likeService
+    }
 
     @Operation(summary = "Add like")
     @PostMapping

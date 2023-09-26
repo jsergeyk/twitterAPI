@@ -1,10 +1,11 @@
-package com.proxyseller.twitter.repository
+package com.proxyseller.twitter.repositories
 
 import com.proxyseller.twitter.document.Comment
 import com.proxyseller.twitter.document.Post
+import com.proxyseller.twitter.repositories.customized.CustomizedCommentRepository
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface CommentRepository extends MongoRepository<Comment, String> {
+interface CommentRepository extends MongoRepository<Comment, String>, CustomizedCommentRepository {
 
     List<Comment> findByPost(Post post)
 

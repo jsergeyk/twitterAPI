@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/users")
 class UserController {
 
-    @Autowired
     private UserService userService
-    @Autowired
-    PostService postService
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PostService postService
+    private PasswordEncoder passwordEncoder
+
+    UserController(UserService userService, PostService postService, PasswordEncoder passwordEncoder) {
+        this.userService = userService
+        this.postService = postService
+        this.passwordEncoder = passwordEncoder
+    }
 
     @Operation(summary = "Editing a current user")
     @PutMapping(value = "/{id}")

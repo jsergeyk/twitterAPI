@@ -1,42 +1,44 @@
-package com.proxyseller.twitter.rest;
+package com.proxyseller.twitter.rest
 
-import com.proxyseller.twitter.document.RefreshToken;
-import com.proxyseller.twitter.document.User;
-import com.proxyseller.twitter.dto.LoginDTO;
-import com.proxyseller.twitter.dto.UserDTO;
-import com.proxyseller.twitter.dto.TokenDTO;
-import com.proxyseller.twitter.security.JwtHelper;
+import com.proxyseller.twitter.document.RefreshToken
+import com.proxyseller.twitter.document.User
+import com.proxyseller.twitter.dto.LoginDTO
+import com.proxyseller.twitter.dto.TokenDTO
+import com.proxyseller.twitter.dto.UserDTO
+import com.proxyseller.twitter.repositories.RefreshTokenRepository
+import com.proxyseller.twitter.security.JwtHelper
 import com.proxyseller.twitter.service.UserService
-import com.proxyseller.twitter.springdata.IRefreshToken
-import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
+import io.swagger.v3.oas.annotations.Operation
+import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
-import javax.validation.Valid;
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthController {
 
-    @Autowired
-    private IRefreshToken refreshTokenRepository
-    @Autowired
+    private RefreshTokenRepository refreshTokenRepository
     private AuthenticationManager authenticationManager
-    @Autowired
     private JwtHelper jwtHelper
-    @Autowired
     private PasswordEncoder passwordEncoder
-    @Autowired
     private UserService userService
+
+    AuthController(RefreshTokenRepository refreshTokenRepository, AuthenticationManager authenticationManager, JwtHelper jwtHelper, PasswordEncoder passwordEncoder, UserService userService) {
+        this.refreshTokenRepository = refreshTokenRepository
+        this.authenticationManager = authenticationManager
+        this.jwtHelper = jwtHelper
+        this.passwordEncoder = passwordEncoder
+        this.userService = userService
+    }
 
     @Operation(summary = "Login")
     @PostMapping("/login")
@@ -98,7 +100,11 @@ class AuthController {
             if (refreshTokenRepository.existsById(tokenId)) {
                 def user = userService.findById(jwtHelper.getUserIdFromRefreshToken(refreshTokenStr))
                 def accessToken = jwtHelper.createAccessToken(user)
-                return ResponseEntity.ok(new TokenDTO(user.getId(), accessToken, refreshTokenStr))
+                def refreshToken = new RefreshToken()
+                refreshToken.setUser(user)
+                refreshTokenRepository.save(refreshToken)
+                def newRefreshToken = jwtHelper.createRefreshToken(user, refreshToken.getId())
+                return ResponseEntity.ok(new TokenDTO(user.getId(), accessToken, newRefreshToken))
             }
         }
         throw  new BadCredentialsException("invalid token")

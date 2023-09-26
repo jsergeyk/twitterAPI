@@ -3,9 +3,9 @@ package com.proxyseller.twitter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.proxyseller.twitter.dto.TokenDTO
 import com.proxyseller.twitter.dto.UserDTO
+import com.proxyseller.twitter.repositories.RefreshTokenRepository
 import com.proxyseller.twitter.service.PostService
 import com.proxyseller.twitter.service.UserService
-import com.proxyseller.twitter.springdata.IRefreshToken
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.http.MediaType
@@ -19,15 +19,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 class AuthControllerTest extends BasicItSpec {
 
     @Autowired
-    MockMvc mockMvc
+    private MockMvc mockMvc
     @Autowired
-    ObjectMapper objectMapper
+    private ObjectMapper objectMapper
     @Autowired
-    UserService userService
+    private UserService userService
     @Autowired
-    PostService postService
+    private PostService postService
     @Autowired
-    IRefreshToken tokenRepository
+    private RefreshTokenRepository tokenRepository
 
     def "post /api/auth/signup"() {
         given:

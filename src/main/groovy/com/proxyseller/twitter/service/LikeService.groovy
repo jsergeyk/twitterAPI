@@ -5,18 +5,20 @@ import com.proxyseller.twitter.document.Post
 import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.LikeDTO
 import com.proxyseller.twitter.exception.PropertyNotFoundException
-import com.proxyseller.twitter.springdata.ILike
-import com.proxyseller.twitter.springdata.IPost
-import org.springframework.beans.factory.annotation.Autowired
+import com.proxyseller.twitter.repositories.LikeRepository
+import com.proxyseller.twitter.repositories.PostRepository
 import org.springframework.stereotype.Service
 
 @Service
 class LikeService {
 
-    @Autowired
-    private ILike likeRepository
-    @Autowired
-    private IPost postRepository
+    private LikeRepository likeRepository
+    private PostRepository postRepository
+
+    LikeService(LikeRepository likeRepository, PostRepository postRepository) {
+        this.likeRepository = likeRepository
+        this.postRepository = postRepository
+    }
 
     Like save(Like like) {
         return likeRepository.save(like)

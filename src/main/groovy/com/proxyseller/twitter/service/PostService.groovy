@@ -5,22 +5,23 @@ import com.proxyseller.twitter.document.User
 import com.proxyseller.twitter.dto.CommentDTO
 import com.proxyseller.twitter.dto.LikeDTO
 import com.proxyseller.twitter.dto.PostDTO
-import com.proxyseller.twitter.springdata.IComment
-import com.proxyseller.twitter.springdata.ILike
-import com.proxyseller.twitter.springdata.IPost
-import org.springframework.beans.factory.annotation.Autowired
+import com.proxyseller.twitter.repositories.CommentRepository
+import com.proxyseller.twitter.repositories.LikeRepository
+import com.proxyseller.twitter.repositories.PostRepository
 import org.springframework.stereotype.Service
 
 @Service
 class PostService {
 
-    @Autowired
-    private IPost postRepository
-    @Autowired
-    private IComment commentRepository
-    @Autowired
-    private ILike likeRepository
+    private PostRepository postRepository
+    private CommentRepository commentRepository
+    private LikeRepository likeRepository
 
+    PostService(PostRepository postRepository, CommentRepository commentRepository, LikeRepository likeRepository) {
+        this.postRepository = postRepository
+        this.commentRepository = commentRepository
+        this.likeRepository = likeRepository
+    }
 
     Post save(Post post) {
         return postRepository.save(post)
